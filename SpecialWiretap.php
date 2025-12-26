@@ -122,7 +122,7 @@ class SpecialWiretap extends SpecialPage {
 		$pager->filterPage = $wgRequest->getVal( 'filterPage' );
 
 		// $form = $pager->getForm();
-		$body = $pager->getBodyOutput();
+		$body = $pager->getBody();
 		$html = '';
 		// $html = $form;
 		if ( $body ) {
