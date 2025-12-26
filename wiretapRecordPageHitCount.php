@@ -73,7 +73,7 @@ class WiretapRecordPageHitCount extends Maintenance {
 			$readConditions[] = "hit_timestamp > $ts";
 		}
 
-		$dbw = wfGetDB( DB_MASTER );
+		$dbw = wfGetDB( defined( 'DB_PRIMARY' ) ? DB_PRIMARY : DB_MASTER );
 
 		// clear the table
 		$res = $dbw->delete(

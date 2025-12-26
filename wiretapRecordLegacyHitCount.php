@@ -48,7 +48,7 @@ class WiretapRecordLegacyHitCount extends Maintenance {
 
 		$this->output( "\nStarting building legacy hit counts" );
 
-		$dbw = wfGetDB( DB_MASTER );
+		$dbw = wfGetDB( defined( 'DB_PRIMARY' ) ? DB_PRIMARY : DB_MASTER );
 
 		if ( ! $dbw->fieldExists( 'page', 'page_counter', __METHOD__ ) ) {
 			$this->output(

@@ -56,7 +56,7 @@ class Wiretap {
 		// calculate response time now, in the last hook (that I know of).
 		$egWiretapCurrentHit['response_time'] = round( ( microtime( true ) - $wgRequestTime ) * 1000 );
 
-		$dbw = wfGetDB( DB_MASTER );
+		$dbw = wfGetDB( defined( 'DB_PRIMARY' ) ? DB_PRIMARY : DB_MASTER );
 		$dbw->insert(
 			'wiretap',
 			$egWiretapCurrentHit,
@@ -86,7 +86,7 @@ class Wiretap {
 		}
 		else return;
 
-		$dbw = wfGetDB( DB_MASTER );
+		$dbw = wfGetDB( defined( 'DB_PRIMARY' ) ? DB_PRIMARY : DB_MASTER );
 		$dbw->upsert(
 			$table,
 			array(
@@ -179,6 +179,43 @@ class Wiretap {
 		else
 			return false;
 
+	}
+
+	/**
+	 * Modern equivalent of SkinTemplateOutputPageBeforeExec for adding a footer item.
+	 *
+	 * @param Skin $skin
+	 * @param string $key
+	 * @param array &$footerlinks
+	 * @return bool
+	 */
+	public static function onSkinAddFooterLinks( Skin $skin, $key, &$footerlinks ) {
+		global $wgDisableCounters;
+
+		if ( $wgDisableCounters ) {
+			return true;
+		}
+
+		// Only add to the "info" footer section.
+		if ( $key !== 'info' ) {
+			return true;
+		}
+
+		/* Without this check multiple lines can be added to the page. */
+		if ( self::$called ) {
+			return true;
+		}
+		self::$called = true;
+
+		$viewcount = Wiretap::getCount( $skin->getTitle() );
+		if ( $viewcount ) {
+			$footerlinks['viewcount'] = $skin->msg( 'wiretap-viewcount' )->numParams(
+				$viewcount->page + $viewcount->redirect,
+				$viewcount->redirect
+			)->parse();
+		}
+
+		return true;
 	}
 
 	// taken from Extension:HitCounter, which I think took it from MW core pre 1.25
