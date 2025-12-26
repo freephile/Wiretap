@@ -72,10 +72,18 @@
 		"MediaWiki": ">= 1.43.0"
 	},
 	"config": {
-		"DisableCounters": false,
-		"WiretapCounterPeriod": 30,
-		"WiretapAddToAlltimeCounter": true,
-		"WiretapAddToPeriodCounter": false
+		"DisableCounters": {
+			"value": false
+		},
+		"WiretapCounterPeriod": {
+			"value": 30
+		},
+		"WiretapAddToAlltimeCounter": {
+			"value": true
+		},
+		"WiretapAddToPeriodCounter": {
+			"value": false
+		}
 	},
 	"manifest_version": 2
 }
