@@ -178,7 +178,7 @@ class SpecialWiretap extends SpecialPage {
 			),
 			null // join conditions
 		);
-		while( $row = $dbr->fetchRow( $res ) ) {
+		while ( $row = $res->fetchRow() ) {
 
 			list($year, $month, $day, $hits) = array($row['year'], $row['month'], $row['day'], $row['num_hits']);
 			$html .= "<tr><td>$year-$month-$day</td><td>$hits</td></tr>";
@@ -220,7 +220,7 @@ class SpecialWiretap extends SpecialPage {
 		);
 		$previous = null;
 
-		while( $row = $dbr->fetchRow( $res ) ) {
+		while ( $row = $res->fetchRow() ) {
 
 			list($year, $month, $day, $hits) = array($row['year'], $row['month'], $row['day'], $row['num_hits']);
 
@@ -273,7 +273,7 @@ class SpecialWiretap extends SpecialPage {
 		);
 
 		$output = array();
-		while( $row = $dbr->fetchRow( $res ) ) {
+		while ( $row = $res->fetchRow() ) {
 
 			// list($year, $month, $day, $hits) = array($row['year'], $row['month'], $row['day'], $row['hits']);
 
@@ -396,7 +396,7 @@ class SpecialWiretap extends SpecialPage {
 
 		$previous = null;
 
-		while( $row = $dbr->fetchRow( $res ) ) {
+		while ( $row = $res->fetchRow() ) {
 
 			list($year, $month, $day, $hits) = array($row['year'], $row['month'], $row['day'], $row['num_hits']);
 
