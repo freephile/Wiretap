@@ -73,7 +73,7 @@ class WiretapRecordPageHitCount extends Maintenance {
 			$readConditions[] = "hit_timestamp > $ts";
 		}
 
-		$dbw = wfGetDB( defined( 'DB_PRIMARY' ) ? DB_PRIMARY : DB_MASTER );
+		$dbw = \MediaWiki\MediaWikiServices::getInstance()->getConnectionProvider()->getPrimaryDatabase();
 
 		// clear the table
 		$res = $dbw->delete(

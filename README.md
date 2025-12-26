@@ -2,26 +2,30 @@
 
 MediaWiki extension for user pageview tracking.
 
+## Requirements
+
+- MediaWiki 1.43+
+
 ## Installation
 
 1. Obtain the code from [GitHub](https://github.com/enterprisemediawiki/Wiretap)
 2. Extract the files in a directory called ``Wiretap`` in your ``extensions/`` folder.
-3. Add the following code at the bottom of your "LocalSettings.php" file: `require_once "$IP/extensions/Wiretap/Wiretap.php";`
+3. Add the following code at the bottom of your ``LocalSettings.php`` file:
+
+	```php
+	wfLoadExtension( 'Wiretap' );
+	```
+
 4. In the command line run `php maintenance/update.php`
-5. Go to "Special:Version" on your wiki to verify that the extension is successfully installed.
-6. Done.
+5. Go to ``Special:Version`` on your wiki to verify that the extension is successfully installed.
 
 ## Upgrading
 
-If upgrading, make sure to run `php maintenance/update.php` as well as `php extensions/Wiretap/wiretapRecordPageHitCount.php --type=all`. This will create a hit-totals count for all pages in your wiki.
+If upgrading, make sure to run `php maintenance/update.php`.
 
-### Before upgrading to MediaWiki 1.25
+To (re)build the denormalized hit totals tables, also run:
 
-Before upgrading your instalation to MediaWiki 1.25, make sure to grab the latest Wiretap and in addition to running update.php and wiretapRecordPageHitCount.php, also run:
-
-```
-php extensions/Wiretap/wiretapRecordLegacyHitCount.php
-```
+`php extensions/Wiretap/wiretapRecordPageHitCount.php --type=all`
 
 ## Important note
 
@@ -32,7 +36,7 @@ that they are not browsing with the anonymity they are familiar with from MediaW
 
 ## Config
 
-The following config was taken from Wiretap.php prior to it being gutted for the new extension registration method. This should be written into proper documentation.
+These settings can be set in ``LocalSettings.php``:
 
 ```php
 // for selecting a short period over which to count hits to pages

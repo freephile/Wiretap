@@ -6,6 +6,25 @@ class Wiretap {
 	static $called = false;
 
 	/**
+	 * Get a database connection.
+	 *
+	 * MediaWiki 1.43+ only.
+	 *
+	 * @param string|int $index 'primary'|'replica' or a DB_* index constant value
+	 * @return mixed Database connection (IDatabase)
+	 */
+	public static function getDB( $index ) {
+		$provider = \MediaWiki\MediaWikiServices::getInstance()->getConnectionProvider();
+		if ( $index === 'primary' ) {
+			return $provider->getPrimaryDatabase();
+		}
+		if ( $index === 'replica' ) {
+			return $provider->getReplicaDatabase();
+		}
+		return $provider->getConnection( $index );
+	}
+
+	/**
 	 *
 	 *
 	 *
@@ -56,7 +75,7 @@ class Wiretap {
 		// calculate response time now, in the last hook (that I know of).
 		$egWiretapCurrentHit['response_time'] = round( ( microtime( true ) - $wgRequestTime ) * 1000 );
 
-		$dbw = wfGetDB( defined( 'DB_PRIMARY' ) ? DB_PRIMARY : DB_MASTER );
+		$dbw = self::getDB( 'primary' );
 		$dbw->insert(
 			'wiretap',
 			$egWiretapCurrentHit,
@@ -86,7 +105,7 @@ class Wiretap {
 		}
 		else return;
 
-		$dbw = wfGetDB( defined( 'DB_PRIMARY' ) ? DB_PRIMARY : DB_MASTER );
+		$dbw = self::getDB( 'primary' );
 		$dbw->upsert(
 			$table,
 			array(
@@ -182,7 +201,7 @@ class Wiretap {
 	}
 
 	/**
-	 * Modern equivalent of SkinTemplateOutputPageBeforeExec for adding a footer item.
+	 * Add a viewcount footer item.
 	 *
 	 * @param Skin $skin
 	 * @param string $key
@@ -218,45 +237,6 @@ class Wiretap {
 		return true;
 	}
 
-	// taken from Extension:HitCounter, which I think took it from MW core pre 1.25
-	public static function onSkinTemplateOutputPageBeforeExec( SkinTemplate &$skin, QuickTemplate &$tpl ) {
-		global $wgDisableCounters;
-
-		/* Without this check two lines are added to the page. */
-		if ( self::$called ) {
-			return;
-		}
-		self::$called = true;
-
-		if ( ! $wgDisableCounters ) {
-			$footer = $tpl->get( 'footerlinks' );
-			if ( isset( $footer['info'] )
-				&& is_array( $footer['info'] )
-				&& ! in_array( 'viewcount', $footer['info'] )
-			) {
-				// 'viewcount' goes after 'lastmod', we'll just assume
-				// 'viewcount' is the 0th item
-				array_splice( $footer['info'], 1, 0, 'viewcount' );
-				$tpl->set( 'footerlinks', $footer );
-			}
-
-			$viewcount = Wiretap::getCount( $skin->getTitle() );
-			if ( $viewcount ) {
-				wfDebugLog(
-					"Wiretap",
-					"Got viewcount and putting in page"
-				);
-				$tpl->set(
-					'viewcount',
-					$skin->msg( 'wiretap-viewcount' )->numParams(
-						$viewcount->page + $viewcount->redirect,
-						$viewcount->redirect
-					)->parse()
-				);
-			}
-		}
-	}
-
 	// eventually add a $period param allowing to specify a
 	static public function getCount ( Title $title ) {
 
@@ -273,7 +253,7 @@ class Wiretap {
 			$findIDs[] = $r->getArticleID();
 		}
 
-		$dbr = wfGetDB( DB_REPLICA );
+		$dbr = self::getDB( 'replica' );
 		$result = $dbr->select(
 			array(
 				'w' => 'wiretap_counter_alltime',

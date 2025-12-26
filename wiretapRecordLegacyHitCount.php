@@ -48,7 +48,7 @@ class WiretapRecordLegacyHitCount extends Maintenance {
 
 		$this->output( "\nStarting building legacy hit counts" );
 
-		$dbw = wfGetDB( defined( 'DB_PRIMARY' ) ? DB_PRIMARY : DB_MASTER );
+		$dbw = \MediaWiki\MediaWikiServices::getInstance()->getConnectionProvider()->getPrimaryDatabase();
 
 		if ( ! $dbw->fieldExists( 'page', 'page_counter', __METHOD__ ) ) {
 			$this->output(

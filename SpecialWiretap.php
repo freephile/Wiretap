@@ -14,13 +14,6 @@ class SpecialWiretap extends SpecialPage {
 	function execute( $parser = null ) {
 		global $wgRequest, $wgOut;
 
-		if ( method_exists( $wgRequest, 'getLimitOffsetForUser' ) ) {
-			// MW 1.35+
-			list( $limit, $offset ) = $wgRequest->getLimitOffsetForUser( $this->getUser() );
-		} else {
-			list( $limit, $offset ) = $wgRequest->getLimitOffset();
-		}
-
 		// $userTarget = isset( $parser ) ? $parser : $wgRequest->getVal( 'username' );
 		$this->mMode = $wgRequest->getVal( 'show' );
 		//$fileactions = array('actions...?');
@@ -129,7 +122,7 @@ class SpecialWiretap extends SpecialPage {
 		$pager->filterPage = $wgRequest->getVal( 'filterPage' );
 
 		// $form = $pager->getForm();
-		$body = method_exists( $pager, 'getBodyOutput' ) ? $pager->getBodyOutput() : $pager->getBody();
+		$body = $pager->getBodyOutput();
 		$html = '';
 		// $html = $form;
 		if ( $body ) {
@@ -165,7 +158,7 @@ class SpecialWiretap extends SpecialPage {
 		// GROUP BY wiretap.hit_year, wiretap.hit_month, wiretap.hit_day
 		// ORDER BY wiretap.hit_year DESC, wiretap.hit_month DESC, wiretap.hit_day DESC
 		// LIMIT 100000;
-		$dbr = wfGetDB( DB_REPLICA );
+		$dbr = Wiretap::getDB( 'replica' );
 
 		$res = $dbr->select(
 			array('w' => 'wiretap'),
@@ -205,7 +198,7 @@ class SpecialWiretap extends SpecialPage {
 
 		$html = '<canvas id="wiretapChart" width="400" height="400"></canvas>';
 
-		$dbr = wfGetDB( DB_REPLICA );
+		$dbr = Wiretap::getDB( 'replica' );
 
 		$res = $dbr->select(
 			array('w' => 'wiretap'),
@@ -252,7 +245,7 @@ class SpecialWiretap extends SpecialPage {
 
 	protected function getUniqueRows ( $uniquePageHits = true, $order = "DESC" ) {
 
-		$dbr = wfGetDB( DB_REPLICA );
+		$dbr = Wiretap::getDB( 'replica' );
 
 		$fields = array(
 			"CONCAT(w.hit_year, '-', w.hit_month, '-', w.hit_day) AS date",
@@ -380,7 +373,7 @@ class SpecialWiretap extends SpecialPage {
 
 		$html = '<div id="wiretap-chart"><svg height="400px"></svg></div>';
 
-		$dbr = wfGetDB( DB_REPLICA );
+		$dbr = Wiretap::getDB( 'replica' );
 
 		$res = $dbr->select(
 			array('w' => 'wiretap'),

@@ -1,6 +1,6 @@
 {
 	"name": "Wiretap",
-	"version": 0.1,
+	"version": "2.0.0",
 	"author": [
 		"[https://www.mediawiki.org/wiki/User:Jamesmontalvo3 James Montalvo]"
 	],
@@ -64,12 +64,12 @@
 		"SkinAddFooterLinks": [
 			"Wiretap::onSkinAddFooterLinks"
 		],
-		"SkinTemplateOutputPageBeforeExec": [
-			"Wiretap::onSkinTemplateOutputPageBeforeExec"
-		],
 		"LoadExtensionSchemaUpdates": [
 			"Wiretap::updateDatabase"
 		]
+	},
+	"requires": {
+		"MediaWiki": ">= 1.43.0"
 	},
 	"config": {
 		"DisableCounters": false,
@@ -77,5 +77,5 @@
 		"WiretapAddToAlltimeCounter": true,
 		"WiretapAddToPeriodCounter": false
 	},
-	"manifest_version": 1
+	"manifest_version": 2
 }
